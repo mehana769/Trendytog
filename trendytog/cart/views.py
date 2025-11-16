@@ -158,36 +158,80 @@ def payment_success(request):
     return redirect("/")
 
 
-def checkout(request):
-    user=request.user
-    if not user.is_authenticated:
-        return redirect.user
-    cart_items=Cart.objects.filter(user=user)
+# def checkout(request):
+#     user=request.user
+#     if not user.is_authenticated:
+#         return redirect.user
+#     cart_items=Cart.objects.filter(user=user)
   
    
-    total=sum(item.sub_price()for item in cart_item)
-    amount_paise=int(total * 100)
+#     total=sum(item.sub_price()for item in cart_item)
+#     amount_paise=int(total * 100)
     
-    client=razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
+#     client=razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
+#     payment = client.order.create({
+#         'amount': amount_paise,
+#         'currency': 'INR',
+#         'payment_capture': '1'
+#     })
+ 
+#     order=Order.objects.create(
+#        user=user, # type: ignore
+#        total_amount=total, # type: ignore
+#        razorpay_order_id=razorpay.Payment['id']
+
+#      )
+#     context={
+#         'cart_items':cart_items,
+#         'total':total,
+#         'payment':payment,
+#         'order':order,
+#         'razorpay_key':settings.RAZORPAY_KEY_ID}
+#     return render('request,payment.html',context)
+
+
+
+def checkout(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect('home:allprodcat')  # redirect to login if user is not authenticated
+
+    # Get cart items
+    cart_items = CartItem.objects.filter(user=user,active=True)
+
+    if not cart_items.exists():
+        return redirect('home:allprodcat')  # redirect if cart is empty
+
+    # Calculate total
+    total = sum(item.sub_total() for item in cart_items)
+    amount_paise = int(total * 100)
+
+    # Razorpay client
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
     payment = client.order.create({
         'amount': amount_paise,
         'currency': 'INR',
         'payment_capture': '1'
     })
- 
-    order=Order.objects.create(
-       user=user, # type: ignore
-       total_amount=total, # type: ignore
-       razorpay_order_id=razorpay.Payment['id']
 
-     )
-    context={
-        'cart_items':cart_items,
-        'total':total,
-        'payment':payment,
-        'order':order,
-        'razorpay_key':settings.RAZORPAY_KEY_ID}
-    return render('request,payment.html',context)
+    # Create order
+    order = Order.objects.create(
+        user=user,
+        total_amount=total,
+        razorpay_order_id=payment['id']
+    )
+
+    context = {
+        'cart_items': cart_items,
+        'total': total,
+        'payment': payment,
+        'order': order,
+        'razorpay_key': settings.RAZORPAY_KEY_ID
+    }
+
+    return render(request, 'payment.html', context)
+
+
 
 
 def payment_success(request):
