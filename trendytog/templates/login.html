@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: #FFDEE9; /* Light kids-friendly gradient */
+        background: linear-gradient(135deg, #A8E6FF 0%, #FFC8DD 100%);
+    }
+    .login-box {
+        max-width: 380px;
+        margin: 90px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    .login-box h3 {
+        color: #FF6F91;
+        font-weight: 700;
+    }
+    label {
+        font-weight: 600;
+        font-size: 15px;
+        color: #444;
+        text-align: left;
+        width: 100%;
+        display: block;
+        margin-top: 10px;
+    }
+    input {
+        border-radius: 12px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        width: 100%;
+        transition: 0.3s;
+    }
+    input:focus {
+        border-color: #FF6F91;
+        box-shadow: 0 0 6px rgba(255, 111, 145, 0.4);
+        outline: none;
+    }
+    .btn-kids {
+        background: #FF6F91;
+        color: #fff;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        border-radius: 12px;
+        font-weight: 600;
+        margin-top: 18px;
+        transition: 0.3s;
+    }
+    .btn-kids:hover {
+        background: #F94875;
+        transform: scale(1.03);
+    }
+    .cute-img {
+        width: 120px;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="login-box">
+    <!-- You can replace this image with your own cartoon -->
+    <img src="https://cdn-icons-png.flaticon.com/512/5063/5063917.png" class="cute-img" alt="Kids Avatar">
+
+    <h3>Welcome Back! 😊</h3>
+
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <label for="id_username">Username</label>
+        {{ form.username }}
+
+        <label for="id_password">Password</label>
+        {{ form.password }}
+
+        <button type="submit" class="btn-kids">Login</button>
+    </form>
+
+</div>
+
+{% endblock %}

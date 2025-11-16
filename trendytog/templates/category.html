@@ -1,0 +1,99 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block metadescription %}
+    {% if category %}
+    {{ category.description|truncatewords:155 }}
+    {% else %}
+    welcome to Trendytog where you can buy all kind of product
+    {% endif %}
+{% endblock %}
+
+{% block title %}
+    {% if category %}
+    {{ category.name }} - Trendytog
+    {% else %}
+    see our new collections - Trendytog
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+{% if category %}
+<div>
+    <div class="row my_row_class">
+        <div class="mx-auto">
+            <p><a href="{% url 'home:allProdCat' %}">our collections</a></p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="mx-auto">
+    {% if category and category.image %}
+    <center>
+        
+        <img class="my_image" src="{{ category.image.url }}" alt="{{ category.name }}" height="600px" width="1500px">
+
+    </center>
+    {% else %}
+    <img class="my_image my_image_padding" src="{% static 'img/banner1.png' %}" alt="our products" height="600px" width="1500px">
+    {% endif %}
+</div>
+
+<br>
+
+{% if category %}
+<div>
+    <h1 class="text-center my_tittle">{{ category.name }}</h1>
+    
+    <p class="text-justify">{{ category.description }}</p>
+</div>
+{% else %}
+<div>
+    <h1 class="text-center my_tittle my_color">🌟 Our fashion Collections</h1>
+    <p class="text-justify">Discover the latest collection of stylish women's and kids dresses perfect for every occasion. 💖</p>
+</div>
+{% endif %}
+
+<div class="container">
+    <div class="row">
+        {% for product in products.object_list %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 text-center" style="min-width: 18 rem;">
+                    <br><br>
+                    <!--<a href="{{ product.get_url }}"> -->
+                    <a href="{% url 'home:prodetail' product.category.slug product.slug %}">
+
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="{% static 'img/default_product.png' %}" alt="{{ product.name }}">
+                        {% endif %}
+                    </a>
+                    <div class="card-body">
+                        <h4>{{ product.name }}</h4>
+                        {% if product.get_discount_percentage > 0 %}
+                            <strong><p style="color: crimson;">Discount: {{product.get_discount_percentage}}%</p></strong>
+                            <p> <strong>Price: $ <strike>{{product.price}}</strike>{{product.get_final_price}}</strong></p>
+                        {% else %}
+                            <p><strong>Price:${{product.price}}</strong></p>
+
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mx-auto">
+    {% if products.paginator.num_pages > 1 %}
+    <div class="text-center">
+        {% for pg in products.paginator.page_range %}
+            <a href="?page={{ pg }}" class="btn btn-light btn-sm {% if products.number == pg %} active {% endif %}">{{ pg }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+<br>
+{% endblock %}

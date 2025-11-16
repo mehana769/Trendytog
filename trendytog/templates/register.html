@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load form_tags %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+<h2>Register</h2>
+<form action=""method="POST">
+    {% csrf_token%}
+    <!--{{ form.as_p }} -->
+     {{form.username.label_tag}}
+     {{form.username}}
+     <br>
+     {{form.email.label_tag}}
+     {{form.emali | add_class:"form-control"}}
+     {{form.password1.label_tag}}
+     {{form.password1}}
+     {{form.password2}}
+    <button class="btn btn-primary w-100" type="submit">Register</button>
+</form>
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success">{{message}}</div>
+    {%endfor%}
+{%endif%}
+
+{% endblock %}
+
